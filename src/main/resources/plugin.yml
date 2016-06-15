@@ -1,0 +1,12 @@
+name: TwitterAPI
+main: fr.galaxyoyo.spigot.twitterapi.TwitterAPI
+version: 1.0
+author: galaxyoyo
+
+commands:
+  tweet:
+    permission: twitterapi.commands.tweet
+
+permissions:
+  twitterapi.commands.tweet:
+    default: op

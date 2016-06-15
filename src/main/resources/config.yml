@@ -1,0 +1,41 @@
+#########################################
+##### Configuration for Twitter API #####
+#########################################
+
+# Select your preferred connection mode.
+# Possible arg: oauth, oath2, xauth
+# Default value: oauth
+preferred-connection-mode: oauth
+
+#########################################
+########## OAuth configuration ##########
+#########################################
+
+# Enter your OAuth consumer key.
+oauth-consumer-key: ""
+
+# Enter your OAuth consumer key secret.
+oauth-consumer-key-secret: ""
+
+# Enter your OAuth access token.
+oauth-access-token: ""
+
+# Enter your OAuth access token secret.
+oauth-access-token-secret: ""
+
+#########################################
+######### OAuth 2 configuration #########
+#########################################
+
+# Enter your OAuth2 access token.
+oauth2-access-token: ""
+
+#########################################
+########## XAuth configuration ##########
+#########################################
+
+# Enter your username.
+xauth-username: ""
+
+# Enter your password.
+xauth-password: ""
