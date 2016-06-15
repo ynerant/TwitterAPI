@@ -3,6 +3,7 @@ package fr.galaxyoyo.spigot.twitterapi;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
@@ -16,6 +17,11 @@ public class TwitterAPI extends JavaPlugin
 {
 	private static TwitterAPI instance;
 	private Twitter twitter;
+
+	public static TwitterAPI instance()
+	{
+		return instance;
+	}
 
 	@Override
 	public void onEnable()
@@ -35,6 +41,7 @@ public class TwitterAPI extends JavaPlugin
 		getLogger().info("You're running the TwitterAPI, made by galaxyoyo. Thanks for downloading!");
 
 		getCommand("tweet").setExecutor(new TweetExecutor());
+		getCommand("dm").setExecutor(new DMExecutor());
 
 		if (!getDataFolder().isDirectory())
 			getDataFolder().mkdir();
@@ -106,23 +113,66 @@ public class TwitterAPI extends JavaPlugin
 		}
 	}
 
-	public static TwitterAPI instance()
-	{
-		return instance;
-	}
-
 	public Twitter getTwitter()
 	{
 		return twitter;
 	}
 
-	public void tweet(String tweet)
+	public DirectMessage dm(String user, String msg)
 	{
-		tweet(tweet, null);
+		return dm(user, msg, null);
 	}
 
-	public void tweet(String tweet, CommandSender sender)
+	public DirectMessage dm(String user, String msg, CommandSender sender)
 	{
+		if (sender != null && !(sender instanceof ConsoleCommandSender))
+			System.out.println("[TwitterAPI] " + sender.getName() + " try to send a dm to @" + user + ": \"" + msg + "\"");
+
+		try
+		{
+			DirectMessage dm = twitter.directMessages().sendDirectMessage(user, msg);
+			if (sender != null)
+				sender.sendMessage("[TwitterAPI] DM succefully sent to @" + user + " with content: \"" + dm.getText() + "\"!");
+			return dm;
+		}
+		catch (TwitterException e)
+		{
+			if (e.getStatusCode() == 404)
+			{
+				String reply = "[TwitterAPI] The user @" + user + " was not found.";
+				if (sender != null && !(sender instanceof ConsoleCommandSender))
+					sender.sendMessage(reply);
+				System.out.println(reply);
+			}
+			else if (e.getStatusCode() == 403)
+			{
+				String reply = "[TwitterAPI] The user @" + user + " doesn't accept dms from you.";
+				if (sender != null && !(sender instanceof ConsoleCommandSender))
+					sender.sendMessage(reply);
+				System.out.println(reply);
+			}
+			else
+			{
+				String reply = "[TwitterAPI] An unknown error occured while sending a dm to @" + user + ".";
+				if (sender != null)
+					sender.sendMessage(reply);
+				System.out.println(reply);
+				e.printStackTrace();
+			}
+			return null;
+		}
+	}
+
+	public Status tweet(String tweet)
+	{
+		return tweet(tweet, null);
+	}
+
+	public Status tweet(String tweet, CommandSender sender)
+	{
+		if (sender != null && !(sender instanceof ConsoleCommandSender))
+			System.out.println("[TwitterAPI] " + sender.getName() + " try to tweet \"" + tweet + "\"");
+
 		try
 		{
 			Status status = twitter.updateStatus(tweet);
@@ -131,10 +181,16 @@ public class TwitterAPI extends JavaPlugin
 				String url = "https://twitter.com/" + status.getUser().getScreenName() + "/status/" + status.getId();
 				sender.sendMessage("[TwitterAPI] Succefully tweeted: '" + tweet + "' on the account: @" + twitter.getScreenName() + "\n\nTweet Link: " + url);
 			}
+			return status;
 		}
 		catch (TwitterException e)
 		{
+			String reply = "[TwitterAPI] An unknown error occured while posting a tweet.";
+			if (sender != null && !(sender instanceof ConsoleCommandSender))
+				sender.sendMessage(reply);
+			System.out.println(reply);
 			e.printStackTrace();
+			return null;
 		}
 	}
 
