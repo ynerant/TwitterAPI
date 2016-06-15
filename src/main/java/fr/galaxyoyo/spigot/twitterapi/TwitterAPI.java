@@ -53,6 +53,8 @@ public class TwitterAPI extends JavaPlugin
 				int size;
 				while ((size = is.read(buffer)) != -1)
 					os.write(buffer, 0, size);
+				is.close();
+				os.close();
 			}
 			catch (IOException e)
 			{
