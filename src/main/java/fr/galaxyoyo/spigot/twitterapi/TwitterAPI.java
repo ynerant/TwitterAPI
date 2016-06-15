@@ -1,7 +1,5 @@
 package fr.galaxyoyo.spigot.twitterapi;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -10,8 +8,7 @@ import org.mcstats.Metrics;
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 public class TwitterAPI extends JavaPlugin
 {
@@ -50,7 +47,12 @@ public class TwitterAPI extends JavaPlugin
 		{
 			try
 			{
-				IOUtils.copy(getClass().getResourceAsStream("/config.yml"), FileUtils.openOutputStream(configFile));
+				InputStream is = getClass().getResourceAsStream("/config.yml");
+				OutputStream os = new BufferedOutputStream(new FileOutputStream(configFile));
+				byte[] buffer = new byte[4096];
+				int size;
+				while ((size = is.read(buffer)) != -1)
+					os.write(buffer, 0, size);
 			}
 			catch (IOException e)
 			{

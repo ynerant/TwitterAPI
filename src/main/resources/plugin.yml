@@ -1,6 +1,6 @@
 name: TwitterAPI
 main: fr.galaxyoyo.spigot.twitterapi.TwitterAPI
-version: 1.1
+version: 1.1.1
 author: galaxyoyo
 
 commands:
