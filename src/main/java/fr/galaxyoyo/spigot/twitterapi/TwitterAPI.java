@@ -134,7 +134,7 @@ public class TwitterAPI extends JavaPlugin
 
 		try
 		{
-			DirectMessage dm = twitter.directMessages().sendDirectMessage(user, msg);
+			DirectMessage dm = twitter.directMessages().sendDirectMessage(user, msg.replace("\\r", "\r").replace("\r", "").replaceAll("\\\\n|\\|", "\n"));
 			if (sender != null)
 				sender.sendMessage("[TwitterAPI] DM succefully sent to @" + user + " with content: \"" + dm.getText() + "\"!");
 			return dm;
@@ -179,11 +179,11 @@ public class TwitterAPI extends JavaPlugin
 
 		try
 		{
-			Status status = twitter.updateStatus(tweet);
+			Status status = twitter.updateStatus(tweet.replace("\\r", "\r").replace("\r", "").replaceAll("\\\\n|\\|", "\n"));
 			if (sender != null)
 			{
 				String url = "https://twitter.com/" + status.getUser().getScreenName() + "/status/" + status.getId();
-				sender.sendMessage("[TwitterAPI] Succefully tweeted: '" + tweet + "' on the account: @" + twitter.getScreenName() + "\n\nTweet Link: " + url);
+				sender.sendMessage("[TwitterAPI] Succefully tweeted: '" + status.getText() + "' on the account: @" + twitter.getScreenName() + "\n\nTweet Link: " + url);
 			}
 			return status;
 		}
